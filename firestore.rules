@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && 
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+    }
+    
+    // Families collection
+    match /families/{familyId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId == familyId;
+    }
+    
+    // Media collection
+    match /media/{mediaId} {
+      allow read: if request.auth != null && 
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+      allow create: if request.auth != null && 
+        request.resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId &&
+        request.resource.data.uploadedBy == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+        (resource.data.uploadedBy == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') &&
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+    }
+    
+    // Posts collection
+    match /posts/{postId} {
+      allow read: if request.auth != null && 
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+      allow create: if request.auth != null && 
+        request.resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId &&
+        request.resource.data.authorId == request.auth.uid;
+      allow update: if request.auth != null && 
+        (resource.data.authorId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') &&
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+      allow delete: if request.auth != null && 
+        (resource.data.authorId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') &&
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && 
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+      allow create: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' &&
+        request.resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+      allow update: if request.auth != null && 
+        resource.data.familyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+    }
+  }
+}
