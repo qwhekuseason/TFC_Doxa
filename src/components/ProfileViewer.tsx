@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { User, Family } from '../types';
@@ -11,7 +11,7 @@ interface ProfileViewerProps {
 }
 
 export default function ProfileViewer({ isOpen, onClose }: ProfileViewerProps) {
-  const { userData, currentUser } = useAuth();
+  const { userData } = useAuth();
   const { isDarkMode } = useTheme();
   const [family, setFamily] = useState<Family | null>(null);
   const [familyMembers, setFamilyMembers] = useState<User[]>([]);

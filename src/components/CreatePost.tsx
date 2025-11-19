@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { createPost } from '../lib/firestore';
-import { X, Send, MessageSquare, Megaphone, Heart } from 'lucide-react';
+import { X, MessageSquare, Megaphone, Heart } from 'lucide-react';
 
 interface CreatePostProps {
   isOpen: boolean;
@@ -24,7 +24,7 @@ export default function CreatePost({ isOpen, onClose, onPostCreated }: CreatePos
     setLoading(true);
     try {
       await createPost({
-        familyId: userData.familyId,
+        familyId: userData.familyId!,
         authorId: userData.id,
         authorName: userData.displayName,
         content: content.trim(),

@@ -1,7 +1,6 @@
-import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
-import { X, Moon, Sun, Bell, Shield, User, LogOut, Palette, Volume2 } from 'lucide-react';
+import { X, Moon, Sun, Bell, Shield, User, LogOut, Volume2 } from 'lucide-react';
 
 interface SettingsProps {
   isOpen: boolean;

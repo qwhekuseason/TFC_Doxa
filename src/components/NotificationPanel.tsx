@@ -1,6 +1,5 @@
-import React from 'react';
 import { Notification } from '../types';
-import { Bell, X, CheckCircle, Info, AlertTriangle } from 'lucide-react';
+import { Bell, X, CheckCircle, Info } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { markNotificationAsRead } from '../lib/firestore';
 
