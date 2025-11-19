@@ -7,7 +7,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { getUserProfile, createUserProfile, updateUserFamily as firestoreUpdateUserFamily, subscribeToUserProfile } from '../lib/firestore';
+import { createUserProfile, updateUserFamily as firestoreUpdateUserFamily, subscribeToUserProfile } from '../lib/firestore';
 import { User } from '../types';
 
 interface AuthContextType {
@@ -32,7 +32,8 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null | undefined>(undefined);
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [authInitialized, setAuthInitialized] = useState(false);
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -77,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      setAuthInitialized(true);
       
       // Clean up previous user profile subscription
       if (unsubscribeFromUserProfile) {
@@ -105,7 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value: AuthContextType = {
-    currentUser,
+    currentUser: authInitialized ? currentUser : null,
     userData,
     login,
     signup,
